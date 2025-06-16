@@ -42,9 +42,6 @@ const Logo = ({ className = '', size = 'md' }: LogoProps) => {
         }`}>
           TrainHub
         </span>
-        {size !== 'sm' && (
-          <span className="text-xs text-gray-500 -mt-1">Powered by AI</span>
-        )}
       </div>
     </div>
   );
