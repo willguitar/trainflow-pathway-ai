@@ -13,6 +13,8 @@ type Screen = 'home' | 'login' | 'admin-dashboard' | 'create-training' | 'report
 interface User {
   name: string;
   role: 'admin' | 'employee';
+  accountType?: string;
+  employeeLimit?: number;
 }
 
 const Index = () => {
@@ -23,9 +25,14 @@ const Index = () => {
   const handleLogin = (userData: User) => {
     setUser(userData);
     setCurrentScreen(userData.role === 'admin' ? 'admin-dashboard' : 'admin-dashboard');
+    
+    const accountTypeText = userData.accountType === 'starter' ? 'Starter' : 
+                           userData.accountType === 'business' ? 'Business' : 
+                           userData.accountType === 'enterprise' ? 'Enterprise' : '';
+    
     toast({
       title: "Login realizado com sucesso!",
-      description: `Bem-vindo(a), ${userData.name}!`,
+      description: `Bem-vindo(a), ${userData.name}! Plano: ${accountTypeText} (até ${userData.employeeLimit} funcionários)`,
     });
   };
 
@@ -41,9 +48,14 @@ const Index = () => {
   const handleCreateTraining = (training: any) => {
     console.log('Novo treinamento criado:', training);
     setCurrentScreen('admin-dashboard');
+    
+    let generatedContent = [];
+    if (training.generateDocument) generatedContent.push('documento');
+    if (training.generateExam) generatedContent.push('prova');
+    
     toast({
-      title: "Treinamento criado com sucesso!",
-      description: `O treinamento "${training.name}" foi criado e atribuído aos funcionários selecionados.`,
+      title: "Treinamento criado com IA!",
+      description: `"${training.name}" foi criado para ${training.employees.length} funcionários. Gerando: ${generatedContent.join(' e ')}.`,
     });
   };
 
@@ -56,6 +68,7 @@ const Index = () => {
       case 'admin-dashboard':
         return (
           <AdminDashboard 
+            user={user}
             onCreateTraining={() => setCurrentScreen('create-training')}
             onViewReports={() => setCurrentScreen('reports')}
           />
