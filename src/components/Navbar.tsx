@@ -16,13 +16,12 @@ const Navbar = ({ user, onLogout }: NavbarProps) => {
     <nav className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">TF</span>
-            </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              TrainFlow
-            </h1>
+          <div className="flex items-center space-x-3">
+            <img 
+              src="/lovable-uploads/98823403-2655-440f-ab64-54018ad5abba.png" 
+              alt="TrainHub Logo" 
+              className="h-10 w-auto"
+            />
           </div>
         </div>
 

@@ -36,10 +36,17 @@ const Hero = ({ onGetStarted }: HeroProps) => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
+          <div className="flex justify-center mb-8">
+            <img 
+              src="/lovable-uploads/98823403-2655-440f-ab64-54018ad5abba.png" 
+              alt="TrainHub Logo" 
+              className="h-20 w-auto"
+            />
+          </div>
           <h1 className="text-5xl font-bold text-gray-900 mb-6 leading-tight">
             Transforme o treinamento corporativo com{' '}
             <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              TrainFlow
+              TrainHub
             </span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
@@ -68,7 +75,7 @@ const Hero = ({ onGetStarted }: HeroProps) => {
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-white text-center">
           <h2 className="text-3xl font-bold mb-4">Pronto para revolucionar seus treinamentos?</h2>
           <p className="text-blue-100 mb-6 text-lg">
-            Junte-se às empresas que já confiam no TrainFlow para desenvolver seus colaboradores
+            Junte-se às empresas que já confiam no TrainHub para desenvolver seus colaboradores
           </p>
           <Button 
             size="lg" 
