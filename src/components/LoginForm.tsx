@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Users, Building, Crown } from 'lucide-react';
+import Logo from '@/components/Logo';
 
 interface LoginFormProps {
   onLogin: (user: { name: string; role: 'admin' | 'employee'; accountType?: string; employeeLimit?: number }) => void;
@@ -116,12 +116,8 @@ const LoginForm = ({ onLogin, onBack }: LoginFormProps) => {
           <Button variant="ghost" onClick={onBack} className="mb-4">
             ← Voltar
           </Button>
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <img 
-              src="/lovable-uploads/98823403-2655-440f-ab64-54018ad5abba.png" 
-              alt="TrainHub Logo" 
-              className="h-12 w-auto"
-            />
+          <div className="flex items-center justify-center mb-4">
+            <Logo size="lg" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             Bem-vindo ao TrainHub

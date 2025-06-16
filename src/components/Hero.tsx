@@ -1,40 +1,49 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowRight, Users, BookOpen, Award, BarChart3 } from 'lucide-react';
+import Logo from '@/components/Logo';
+
 interface HeroProps {
   onGetStarted: () => void;
 }
-const Hero = ({
-  onGetStarted
-}: HeroProps) => {
-  const features = [{
-    icon: Users,
-    title: 'Gestão de Usuários',
-    description: 'Cadastre e gerencie funcionários e administradores'
-  }, {
-    icon: BookOpen,
-    title: 'Treinamentos Personalizados',
-    description: 'Crie treinamentos customizados com templates'
-  }, {
-    icon: Award,
-    title: 'Certificações',
-    description: 'Gere certificados automaticamente'
-  }, {
-    icon: BarChart3,
-    title: 'Relatórios Detalhados',
-    description: 'Acompanhe o progresso e desempenho'
-  }];
-  return <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+
+const Hero = ({ onGetStarted }: HeroProps) => {
+  const features = [
+    {
+      icon: Users,
+      title: 'Gestão de Usuários',
+      description: 'Cadastre e gerencie funcionários e administradores'
+    },
+    {
+      icon: BookOpen,
+      title: 'Treinamentos Personalizados',
+      description: 'Crie treinamentos customizados com templates'
+    },
+    {
+      icon: Award,
+      title: 'Certificações',
+      description: 'Gere certificados automaticamente'
+    },
+    {
+      icon: BarChart3,
+      title: 'Relatórios Detalhados',
+      description: 'Acompanhe o progresso e desempenho'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
           <div className="flex justify-center mb-8">
-            
+            <Logo size="lg" />
           </div>
           <h1 className="text-5xl font-bold text-gray-900 mb-6 leading-tight">
             Transforme o treinamento corporativo com{' '}
             <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              TrainHub
+              Inteligência Artificial
             </span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
@@ -47,11 +56,13 @@ const Hero = ({
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {features.map((feature, index) => <Card key={index} className="p-6 hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+          {features.map((feature, index) => (
+            <Card key={index} className="p-6 hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
               <feature.icon className="h-12 w-12 text-blue-600 mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
               <p className="text-gray-600 text-sm">{feature.description}</p>
-            </Card>)}
+            </Card>
+          ))}
         </div>
 
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 text-white text-center">
@@ -64,6 +75,8 @@ const Hero = ({
           </Button>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Hero;
