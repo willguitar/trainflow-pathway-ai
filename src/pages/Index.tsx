@@ -70,13 +70,7 @@ const Index = () => {
       case 'login':
         return <LoginForm onLogin={handleLogin} onBack={() => setCurrentScreen('home')} />;
       case 'admin-dashboard':
-        return (
-          <AdminDashboard 
-            user={user}
-            onCreateTraining={() => setCurrentScreen('create-training')}
-            onViewReports={() => setCurrentScreen('reports')}
-          />
-        );
+        return <AdminDashboard user={user} />;
       case 'employee-dashboard':
         return <EmployeeDashboard user={user} />;
       case 'create-training':
