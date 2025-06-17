@@ -1,165 +1,181 @@
-
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Plus, Users, BookOpen, Award, BarChart3, Calendar, Clock, Brain, FileText, ClipboardCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { BookOpen, Users, Clock, Award, Plus, Video, FileText, Settings, BarChart3 } from 'lucide-react';
+import CreateTraining from './CreateTraining';
+import VideoManager from './VideoManager';
 
 interface User {
   name: string;
   role: 'admin' | 'employee';
-  accountType?: string;
-  employeeLimit?: number;
 }
 
 interface AdminDashboardProps {
   user?: User;
-  onCreateTraining: () => void;
-  onViewReports: () => void;
 }
 
-const AdminDashboard = ({ user, onCreateTraining, onViewReports }: AdminDashboardProps) => {
-  const [trainings] = useState([
+const AdminDashboard = ({ user }: AdminDashboardProps) => {
+  const [currentView, setCurrentView] = useState<'dashboard' | 'create' | 'video'>('dashboard');
+  const [selectedTrainingId, setSelectedTrainingId] = useState<number | null>(null);
+  
+  const [trainings, setTrainings] = useState([
     {
       id: 1,
-      title: 'Segurança no Trabalho',
-      department: 'Geral',
-      status: 'Em Andamento',
+      name: 'Segurança no Trabalho',
+      description: 'Treinamento essencial sobre normas de segurança',
+      status: 'Ativo',
+      progress: 75,
       participants: 25,
-      completion: 80,
+      completionRate: 80,
       createdAt: '2024-01-15',
-      hasDocument: true,
-      hasExam: true,
-      aiGenerated: false
+      videos: [
+        { id: 1, title: 'Introdução à Segurança', type: 'manual' },
+        { id: 2, title: 'EPIs Obrigatórios', type: 'ai-generated' }
+      ]
     },
     {
       id: 2,
-      title: 'Vendas Consultivas com IA',
-      department: 'Vendas',
-      status: 'Gerando Conteúdo',
-      participants: 12,
-      completion: 0,
+      name: 'Vendas Consultivas com IA',
+      description: 'Técnicas modernas de vendas',
+      status: 'Em Desenvolvimento',
+      progress: 30,
+      participants: 0,
+      completionRate: 0,
       createdAt: '2024-01-20',
-      hasDocument: true,
-      hasExam: true,
-      aiGenerated: true
+      videos: []
     },
     {
       id: 3,
-      title: 'Compliance Corporativo',
-      department: 'Administrativo',
+      name: 'Compliance Corporativo',
+      description: 'Políticas e procedimentos da empresa',
       status: 'Concluído',
-      participants: 8,
-      completion: 100,
+      progress: 100,
+      participants: 40,
+      completionRate: 95,
       createdAt: '2024-01-10',
-      hasDocument: true,
-      hasExam: false,
-      aiGenerated: false
+      videos: [
+        { id: 3, title: 'Políticas Internas', type: 'manual' }
+      ]
     }
   ]);
 
-  const currentEmployees = 32; // Example current number of employees
-  const employeeLimit = user?.employeeLimit || 100;
-  const employeeUsage = (currentEmployees / employeeLimit) * 100;
+  const handleCreateTraining = (training: any) => {
+    const newTraining = {
+      id: Date.now(),
+      ...training,
+      progress: 0,
+      participants: 0,
+      completionRate: 0,
+      videos: []
+    };
+    setTrainings([...trainings, newTraining]);
+    setCurrentView('dashboard');
+  };
+
+  const handleVideoAdded = (video: any) => {
+    if (selectedTrainingId) {
+      setTrainings(prev => prev.map(training => 
+        training.id === selectedTrainingId 
+          ? { ...training, videos: [...training.videos, video] }
+          : training
+      ));
+      setCurrentView('dashboard');
+      setSelectedTrainingId(null);
+    }
+  };
+
+  const handleManageVideos = (trainingId: number) => {
+    setSelectedTrainingId(trainingId);
+    setCurrentView('video');
+  };
+
+  const handleBackToDashboard = () => {
+    setCurrentView('dashboard');
+    setSelectedTrainingId(null);
+  };
+
+  if (currentView === 'create') {
+    return (
+      <CreateTraining
+        onBack={handleBackToDashboard}
+        onCreateTraining={handleCreateTraining}
+      />
+    );
+  }
+
+  if (currentView === 'video' && selectedTrainingId) {
+    return (
+      <VideoManager
+        trainingId={selectedTrainingId}
+        onBack={handleBackToDashboard}
+        onVideoAdded={handleVideoAdded}
+      />
+    );
+  }
 
   const stats = [
     {
-      title: 'Funcionários Ativos',
-      value: `${currentEmployees}/${employeeLimit}`,
-      icon: Users,
-      color: 'text-blue-600',
-      progress: employeeUsage
+      title: 'Total de Treinamentos',
+      value: trainings.length.toString(),
+      icon: BookOpen,
+      color: 'text-blue-600'
     },
     {
-      title: 'Treinamentos Ativos',
-      value: trainings.filter(t => t.status === 'Em Andamento').length.toString(),
-      icon: BookOpen,
+      title: 'Funcionários Ativos',
+      value: trainings.reduce((acc, t) => acc + t.participants, 0).toString(),
+      icon: Users,
       color: 'text-green-600'
     },
     {
-      title: 'Gerados por IA',
-      value: trainings.filter(t => t.aiGenerated).length.toString(),
-      icon: Brain,
+      title: 'Taxa de Conclusão',
+      value: Math.round(trainings.reduce((acc, t) => acc + t.completionRate, 0) / trainings.length) + '%',
+      icon: Award,
       color: 'text-purple-600'
     },
     {
-      title: 'Taxa de Conclusão',
-      value: '92%',
-      icon: BarChart3,
-      color: 'text-orange-600'
+      title: 'Em Desenvolvimento',
+      value: trainings.filter(t => t.status === 'Em Desenvolvimento').length.toString(),
+      icon: Clock,
+      color: 'text-yellow-600'
     }
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Em Andamento':
-        return 'bg-blue-100 text-blue-800';
-      case 'Concluído':
+      case 'Ativo':
         return 'bg-green-100 text-green-800';
-      case 'Planejado':
+      case 'Em Desenvolvimento':
         return 'bg-yellow-100 text-yellow-800';
-      case 'Gerando Conteúdo':
-        return 'bg-purple-100 text-purple-800';
+      case 'Concluído':
+        return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const getAccountTypeName = () => {
-    switch (user?.accountType) {
-      case 'starter': return 'Starter';
-      case 'business': return 'Business';
-      case 'enterprise': return 'Enterprise';
-      default: return 'Business';
-    }
-  };
-
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard Administrativo</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
           <p className="text-gray-600 mt-1">
-            Gerencie treinamentos com IA e acompanhe o progresso da equipe
+            Bem-vindo(a), {user?.name}! Gerencie treinamentos e acompanhe o progresso da equipe
           </p>
         </div>
-        <div className="flex items-center space-x-4">
-          <Badge variant="outline" className="text-sm">
-            Plano {getAccountTypeName()}
-          </Badge>
-          <Button 
-            onClick={onCreateTraining}
-            className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Criar Treinamento com IA
-          </Button>
-        </div>
+        <Button 
+          onClick={() => setCurrentView('create')}
+          className="bg-gradient-to-r from-blue-600 to-blue-800"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Criar Treinamento
+        </Button>
       </div>
 
-      {/* Account Usage */}
-      {user?.employeeLimit && (
-        <Card className="border-l-4 border-l-blue-500">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-lg font-semibold">Uso da Conta</h3>
-                <p className="text-sm text-gray-600">
-                  {currentEmployees} de {user.employeeLimit} funcionários cadastrados
-                </p>
-              </div>
-              <Badge variant={employeeUsage > 80 ? "destructive" : "secondary"}>
-                {Math.round(employeeUsage)}% usado
-              </Badge>
-            </div>
-            <Progress value={employeeUsage} className="h-2" />
-          </CardContent>
-        </Card>
-      )}
-
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <Card key={index} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
@@ -167,9 +183,6 @@ const AdminDashboard = ({ user, onCreateTraining, onViewReports }: AdminDashboar
                 <div>
                   <p className="text-sm font-medium text-gray-600">{stat.title}</p>
                   <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-                  {stat.progress !== undefined && (
-                    <Progress value={stat.progress} className="h-1 mt-2" />
-                  )}
                 </div>
                 <stat.icon className={`h-8 w-8 ${stat.color}`} />
               </div>
@@ -178,87 +191,81 @@ const AdminDashboard = ({ user, onCreateTraining, onViewReports }: AdminDashboar
         ))}
       </div>
 
-      {/* Training List */}
+      {/* Training Management */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Treinamentos Recentes</CardTitle>
-              <CardDescription>Acompanhe o status dos treinamentos criados com IA</CardDescription>
-            </div>
-            <Button variant="outline" onClick={onViewReports}>
-              <BarChart3 className="h-4 w-4 mr-2" />
-              Ver Relatórios
-            </Button>
-          </div>
+          <CardTitle>Treinamentos Criados</CardTitle>
+          <CardDescription>Gerencie e monitore todos os treinamentos da empresa</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {trainings.map((training) => (
-              <div key={training.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center space-x-2">
-                    <h3 className="font-semibold text-lg text-gray-900">{training.title}</h3>
-                    {training.aiGenerated && (
-                      <Badge variant="secondary" className="text-xs">
-                        <Brain className="h-3 w-3 mr-1" />
-                        IA
+              <div key={training.id} className="border rounded-lg p-6 hover:bg-gray-50 transition-colors">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <h3 className="font-semibold text-lg text-gray-900">{training.name}</h3>
+                      <Badge className={getStatusColor(training.status)}>
+                        {training.status}
                       </Badge>
+                    </div>
+                    <p className="text-gray-600 mb-3">{training.description}</p>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4">
+                      <div className="flex items-center">
+                        <Users className="h-4 w-4 mr-2" />
+                        {training.participants} participantes
+                      </div>
+                      <div className="flex items-center">
+                        <Award className="h-4 w-4 mr-2" />
+                        {training.completionRate}% conclusão
+                      </div>
+                      <div className="flex items-center">
+                        <Video className="h-4 w-4 mr-2" />
+                        {training.videos.length} vídeos
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="h-4 w-4 mr-2" />
+                        Criado em {new Date(training.createdAt).toLocaleDateString('pt-BR')}
+                      </div>
+                    </div>
+
+                    {training.status !== 'Concluído' && (
+                      <div className="mb-4">
+                        <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                          <span>Progresso de Desenvolvimento</span>
+                          <span>{training.progress}%</span>
+                        </div>
+                        <Progress value={training.progress} className="h-2" />
+                      </div>
                     )}
                   </div>
-                  <Badge className={getStatusColor(training.status)}>
-                    {training.status}
-                  </Badge>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-3">
-                  <div className="flex items-center">
-                    <Users className="h-4 w-4 mr-2" />
-                    {training.participants} participantes
-                  </div>
-                  <div className="flex items-center">
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    {training.department}
-                  </div>
-                  <div className="flex items-center">
+
+                <div className="flex items-center space-x-3">
+                  <Button 
+                    variant="outline"
+                    onClick={() => handleManageVideos(training.id)}
+                  >
+                    <Video className="h-4 w-4 mr-2" />
+                    Gerenciar Vídeos
+                  </Button>
+                  
+                  <Button variant="outline">
+                    <FileText className="h-4 w-4 mr-2" />
+                    Material
+                  </Button>
+                  
+                  <Button variant="outline">
                     <BarChart3 className="h-4 w-4 mr-2" />
-                    {training.completion}% concluído
-                  </div>
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    {new Date(training.createdAt).toLocaleDateString('pt-BR')}
-                  </div>
+                    Relatórios
+                  </Button>
+                  
+                  <Button variant="outline">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Configurar
+                  </Button>
                 </div>
-
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
-                  {training.hasDocument && (
-                    <div className="flex items-center">
-                      <FileText className="h-4 w-4 mr-1 text-blue-600" />
-                      Documento
-                    </div>
-                  )}
-                  {training.hasExam && (
-                    <div className="flex items-center">
-                      <ClipboardCheck className="h-4 w-4 mr-1 text-green-600" />
-                      Prova
-                    </div>
-                  )}
-                </div>
-
-                {training.status === 'Em Andamento' && (
-                  <div className="mt-3">
-                    <div className="flex items-center justify-between text-sm text-gray-600 mb-1">
-                      <span>Progresso</span>
-                      <span>{training.completion}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-blue-600 to-blue-800 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${training.completion}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
           </div>
