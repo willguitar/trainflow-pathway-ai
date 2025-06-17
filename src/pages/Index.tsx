@@ -4,17 +4,19 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import LoginForm from '@/components/LoginForm';
 import AdminDashboard from '@/components/AdminDashboard';
+import EmployeeDashboard from '@/components/EmployeeDashboard';
 import CreateTraining from '@/components/CreateTraining';
 import Reports from '@/components/Reports';
 import { useToast } from '@/hooks/use-toast';
 
-type Screen = 'home' | 'login' | 'admin-dashboard' | 'create-training' | 'reports';
+type Screen = 'home' | 'login' | 'admin-dashboard' | 'employee-dashboard' | 'create-training' | 'reports';
 
 interface User {
   name: string;
   role: 'admin' | 'employee';
   accountType?: string;
   employeeLimit?: number;
+  department?: string;
 }
 
 const Index = () => {
@@ -24,15 +26,17 @@ const Index = () => {
 
   const handleLogin = (userData: User) => {
     setUser(userData);
-    setCurrentScreen(userData.role === 'admin' ? 'admin-dashboard' : 'admin-dashboard');
+    // Direciona para o dashboard correto baseado no tipo de usuário
+    setCurrentScreen(userData.role === 'admin' ? 'admin-dashboard' : 'employee-dashboard');
     
+    const roleText = userData.role === 'admin' ? 'Administrador' : 'Funcionário';
     const accountTypeText = userData.accountType === 'starter' ? 'Starter' : 
                            userData.accountType === 'business' ? 'Business' : 
                            userData.accountType === 'enterprise' ? 'Enterprise' : '';
     
     toast({
       title: "Login realizado com sucesso!",
-      description: `Bem-vindo(a), ${userData.name}! Plano: ${accountTypeText} (até ${userData.employeeLimit} funcionários)`,
+      description: `Bem-vindo(a), ${userData.name}! ${userData.role === 'admin' ? `Plano: ${accountTypeText} (até ${userData.employeeLimit} funcionários)` : `Área: ${userData.department || 'Geral'}`}`,
     });
   };
 
@@ -73,6 +77,8 @@ const Index = () => {
             onViewReports={() => setCurrentScreen('reports')}
           />
         );
+      case 'employee-dashboard':
+        return <EmployeeDashboard user={user} />;
       case 'create-training':
         return (
           <CreateTraining 
