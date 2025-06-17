@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { BookOpen, Clock, Award, Play, FileText, ClipboardCheck, CheckCircle } from 'lucide-react';
+import TrainingViewer from './TrainingViewer';
 
 interface User {
   name: string;
@@ -17,7 +17,10 @@ interface EmployeeDashboardProps {
 }
 
 const EmployeeDashboard = ({ user }: EmployeeDashboardProps) => {
-  const [trainings] = useState([
+  const [currentView, setCurrentView] = useState<'dashboard' | 'training'>('dashboard');
+  const [selectedTrainingId, setSelectedTrainingId] = useState<number | null>(null);
+  
+  const [trainings, setTrainings] = useState([
     {
       id: 1,
       title: 'Segurança no Trabalho',
@@ -58,6 +61,36 @@ const EmployeeDashboard = ({ user }: EmployeeDashboardProps) => {
       department: 'Administrativo'
     }
   ]);
+
+  const handleStartTraining = (trainingId: number) => {
+    setSelectedTrainingId(trainingId);
+    setCurrentView('training');
+  };
+
+  const handleCompleteTraining = (trainingId: number) => {
+    setTrainings(prev => prev.map(training => 
+      training.id === trainingId 
+        ? { ...training, status: 'Concluído', progress: 100, examStatus: 'approved' }
+        : training
+    ));
+    setCurrentView('dashboard');
+    setSelectedTrainingId(null);
+  };
+
+  const handleBackToDashboard = () => {
+    setCurrentView('dashboard');
+    setSelectedTrainingId(null);
+  };
+
+  if (currentView === 'training' && selectedTrainingId) {
+    return (
+      <TrainingViewer
+        trainingId={selectedTrainingId}
+        onBack={handleBackToDashboard}
+        onComplete={handleCompleteTraining}
+      />
+    );
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -227,13 +260,19 @@ const EmployeeDashboard = ({ user }: EmployeeDashboardProps) => {
 
                 <div className="flex items-center space-x-3">
                   {training.status === 'Não Iniciado' && (
-                    <Button className="bg-gradient-to-r from-blue-600 to-blue-800">
+                    <Button 
+                      className="bg-gradient-to-r from-blue-600 to-blue-800"
+                      onClick={() => handleStartTraining(training.id)}
+                    >
                       <Play className="h-4 w-4 mr-2" />
                       Iniciar Treinamento
                     </Button>
                   )}
                   {training.status === 'Em Andamento' && (
-                    <Button className="bg-gradient-to-r from-blue-600 to-blue-800">
+                    <Button 
+                      className="bg-gradient-to-r from-blue-600 to-blue-800"
+                      onClick={() => handleStartTraining(training.id)}
+                    >
                       <BookOpen className="h-4 w-4 mr-2" />
                       Continuar
                     </Button>
