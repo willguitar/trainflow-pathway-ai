@@ -106,8 +106,8 @@ const ClassDiagram = () => {
                   </CardHeader>
                   <CardContent className="text-xs space-y-1">
                     <div className="font-medium text-green-600">Props:</div>
-                    <div>+ onBack: () => void</div>
-                    <div>+ onCreateTraining: (data) => void</div>
+                    <div>+ onBack: () =&gt; void</div>
+                    <div>+ onCreateTraining: (data) =&gt; void</div>
                     <div className="font-medium text-blue-600">Estados:</div>
                     <div>+ formData: TrainingForm</div>
                     <div>+ selectedEmployees: User[]</div>
@@ -123,8 +123,8 @@ const ClassDiagram = () => {
                   <CardContent className="text-xs space-y-1">
                     <div className="font-medium text-green-600">Props:</div>
                     <div>+ trainingId: number</div>
-                    <div>+ onBack: () => void</div>
-                    <div>+ onComplete: (id) => void</div>
+                    <div>+ onBack: () =&gt; void</div>
+                    <div>+ onComplete: (id) =&gt; void</div>
                     <div className="font-medium text-blue-600">Estados:</div>
                     <div>+ currentProgress: number</div>
                     <div>+ isPlaying: boolean</div>
@@ -166,8 +166,8 @@ const ClassDiagram = () => {
                   <CardContent className="text-xs space-y-1">
                     <div className="font-medium text-green-600">Props:</div>
                     <div>+ trainingId: number</div>
-                    <div>+ onBack: () => void</div>
-                    <div>+ onVideoAdded: (video) => void</div>
+                    <div>+ onBack: () =&gt; void</div>
+                    <div>+ onVideoAdded: (video) =&gt; void</div>
                     <div className="font-medium text-blue-600">Estados:</div>
                     <div>+ activeTab: string</div>
                     <div>+ isGenerating: boolean</div>
